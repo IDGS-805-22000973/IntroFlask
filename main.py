@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app=Flask(__name__)
 #Mandar a llamar las paginas que tenemos
@@ -50,6 +50,64 @@ def form1():
     <label for=nombre> nombre: </label>
     </form>
     '''
+
+@app.route("/OperasBas")
+def operas():
+    return render_template("OperasBas.html")
+
+@app.route("/resultado", methods=["GET", "POST"])
+def func():
+    resultados = ""
+    if request.method == "POST":
+        num1 = int(request.form.get("n1"))
+        num2 = int(request.form.get("n2"))
+        operacion = request.form.get("operacion")
+
+        if operacion == "suma":
+            resultados = f"La suma de {num1} + {num2} = {num1 + num2}"
+        elif operacion == "resta":
+            resultados = f"La resta de {num1} - {num2} = {num1 - num2}"
+        elif operacion == "multiplicacion":
+            resultados = f"La multiplicación de {num1} x {num2} = {num1 * num2}"
+        elif operacion == "division":
+            if num2 == 0:
+                resultados = "No se puede dividir entre cero."
+            else:
+                resultados = f"La división de {num1} / {num2} = {num1 / num2}"
+    
+    return render_template("OperasBas.html", resultado=resultados)
+
+
+@app.route("/Cinepolis")
+def cinepolis():
+    return render_template("Cinepolis.html")
+
+
+@app.route("/procesar_compra", methods=["POST"])
+def fun():
+    nombre = request.form.get("nombre")
+    num_compradores = int(request.form.get("numCompradores", 0))
+    num_boletos = int(request.form.get("numBoletos", 0))
+    metodo_pago = request.form.get("metodoPago")
+
+    if not nombre or num_compradores <= 0 or num_boletos <= 0 or not metodo_pago:
+        return render_template("Cinepolis.html", procesar_compra="Datos incompletos o invalidos.")
+
+    # boletos maximos por compradores
+    max_boletos = num_compradores * 7
+    if num_boletos > max_boletos:
+        return render_template("Cinepolis.html", procesar_compra=f"No puedes comprar mas de {max_boletos} boletos")
+
+    # calculo del precio
+    precio = num_boletos * 12
+    if num_boletos > 5:
+        precio *= 0.85
+    elif num_boletos > 2:
+        precio *= 0.90
+    if metodo_pago == "si":
+        precio *= 0.90
+
+    return render_template("Cinepolis.html", procesar_compra=f"Total a pagar: ${precio:.2f}")
 
 if __name__ == "__main__":
     app.run(debug=True, port=3000)

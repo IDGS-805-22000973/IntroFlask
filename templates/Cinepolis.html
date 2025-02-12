@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block container %}
+<html>
+    <body>
+        <form action="/procesar_compra" method="post">
+            <div>
+                <h1>Cinepolis</h1>
+            </div>
+            <div>
+                <h2>Entradas</h2>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="numCompradores">Cantidad de Compradores</label>
+                <input type="number" id="numCompradores" name="numCompradores" required>
+
+                <div>
+                    <label>Tarjeta Cineco</label>
+                    <input type="radio" id="tarjetaSi" name="metodoPago" value="si" required> 
+                    <label for="tarjetaSi">Sí</label>
+                    <input type="radio" id="tarjetaNo" name="metodoPago" value="no" required> 
+                    <label for="tarjetaNo">No</label>
+                </div>
+
+                <label for="numBoletos">Cantidad de Boletos</label>
+                <input type="number" id="numBoletos" name="numBoletos" required>
+            </div>
+
+            <div>
+                <h2>Salidas</h2>
+                <label for="resultado">Valor a pagar:</label>
+                <p id="resultado">{{ procesar_compra }}</p>
+            </div>
+
+            <div>
+                <h2>Acciones</h2>
+                <button type="submit">Procesar</button>
+                <button type="button" onclick="window.location.href='/'">Salir</button>
+            </div>
+        </form>
+    </body>
+</html>
+{%endblock%}
