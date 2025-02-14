@@ -1,11 +1,34 @@
 from flask import Flask, render_template, request
 
-app=Flask(__name__)
+import forms
+
 #Mandar a llamar las paginas que tenemos
+app=Flask(__name__)
+
+
+
+#Ruta ejemplo formulario
+@app.route("/alumnos", methods=["GET", "POST"])
+def alumnos():
+    mat=''
+    nom=''
+    ape=''
+    email=''
+
+    alumno_clase=forms.UserForm(request.form)
+    if request.method=="POST":
+        mat=alumno_clase.matricula.data
+        nom=alumno_clase.nombre.data
+        ape=alumno_clase.apellido.data
+        email=alumno_clase.email.data
+        print('Nombre: {}'.format(nom))
+    return render_template("alumnos.html", form=alumno_clase)
+
+
 
 @app.route("/")
 def index():
-    titulo="IDGS801"
+    titulo="IDGS805"
     lista=["Pedro", "Juan", "Mario"]
     return render_template("index.html",titulo=titulo,lista=lista)
 
