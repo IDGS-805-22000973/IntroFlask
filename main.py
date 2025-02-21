@@ -1,9 +1,49 @@
-from flask import Flask, render_template, request
-
+from datetime import datetime
+import zodiacoForm
 import forms
+from flask import Flask, render_template, request, flash
 
-#Mandar a llamar las paginas que tenemos
-app=Flask(__name__)
+app = Flask(__name__)
+
+
+def obtener_signo_zodiaco_chino(fechaN):
+    try:
+        fecha_nac = datetime.strptime(fechaN, '%Y-%m-%d')
+        anio = fecha_nac.year
+        edad = datetime.now().year - anio
+        if (datetime.now().month, datetime.now().day) < (fecha_nac.month, fecha_nac.day):
+            edad -= 1
+        signos = ['Mono', 'Gallo', 'Perro', 'Cerdo', 'Rata', 'Buey', 'Tigre', 'Conejo', 'Dragon', 'Serpiente', 'Caballo', 'Cabra']
+        signo = signos[anio % 12]
+        ruta_imagen = f"../static/bootstrap/img/{signo.lower()}.png"
+        return signo, ruta_imagen, edad
+    except ValueError:
+        return "error en el formato", None, 
+
+@app.route("/zodiaco", methods=["GET", "POST"])
+def datos():
+    nom= ''
+    apeP= ''
+    apeM= ''
+    fechaN= ''
+    edad= ''
+    sex= ''
+    signo_zodiaco= ''
+    ruta_imagen= None
+
+    zodiaco_clase = zodiacoForm.ZodiacoForm(request.form)
+    if request.method == "POST" and zodiaco_clase.validate():
+        nom = zodiaco_clase.nombre.data
+        apeP = zodiaco_clase.apellidoP.data
+        apeM = zodiaco_clase.apellidoM.data
+        fechaN = zodiaco_clase.fechaN.data
+        sex = zodiaco_clase.sexo.data
+        signo_zodiaco, ruta_imagen, edad = obtener_signo_zodiaco_chino(fechaN)
+        if signo_zodiaco == "error en el formato":
+            flash("formato de fecha inválido, ingrese la fecha en el formato YYYY-MM-DD.")
+        else:
+            print(f"Hola: {nom} {apeP} {apeM} Tienes: {edad} años, Tu Sexo es: {sex} y tu signo del Zodiaco Chino es: {signo_zodiaco}")
+    return render_template("zodiaco.html", form=zodiaco_clase, nom=nom, apeP=apeP, apeM=apeM, fechaN=fechaN, sex=sex, signo_zodiaco=signo_zodiaco, ruta_imagen=ruta_imagen, edad=edad)
 
 
 
@@ -16,15 +56,13 @@ def alumnos():
     email=''
 
     alumno_clase=forms.UserForm(request.form)
-    if request.method=="POST":
+    if request.method=="POST" and alumno_clase.validate():
         mat=alumno_clase.matricula.data
         nom=alumno_clase.nombre.data
         ape=alumno_clase.apellido.data
         email=alumno_clase.email.data
         print('Nombre: {}'.format(nom))
-    return render_template("alumnos.html", form=alumno_clase)
-
-
+    return render_template("alumnos.html", form=alumno_clase, mat=mat, nom=nom, ape=ape, email=email)
 
 @app.route("/")
 def index():
@@ -64,7 +102,6 @@ def suma(n1,n2):
 @app.route("/default/<string:tem>")
 def func1(tem='Juan'):
     return f"Hola, {tem}!"
-
 
 @app.route("/form1")
 def form1():

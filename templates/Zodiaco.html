@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block container %}
+{% import "_macros.html" as macros %}
+
+<h1 class="text-center mb-4">Zodiaco</h1>
+<div class="row align-items-stretch">
+    <div class="col-md-6 d-flex flex-column h-100">
+        <form action="zodiaco" method="post" novalidate class="card p-3 shadow flex-grow-1">
+            <div class="row control-group mb-3">
+                <div class="form-group col-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.nombre, class='form-control') }}
+                </div>
+            </div>
+            <div class="row control-group mb-3">
+                <div class="form-group col-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.apellidoP, class='form-control') }}
+                </div>
+            </div>
+            <div class="row control-group mb-3">
+                <div class="form-group col-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.apellidoM, class='form-control') }}
+                </div>
+            </div>
+            <div class="row control-group mb-3">
+                <div class="form-group col-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.fechaN, class='form-control') }}
+                </div>
+            </div>
+            <div class="row control-group mb-3">
+                <div class="form-group col-12 floating-label-form-group controls">
+                    <label>Sexo</label><br>
+                    {% for subfield in form.sexo %}
+                        <div class="form-check form-check-inline">
+                            {{ subfield(class="form-check-input") }}
+                            {{ subfield.label(class="form-check-label") }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <input type="submit" value="Guardar" class="btn btn-primary mt-3"/>
+        </form>
+    </div>
+
+    <div class="col-md-6 d-flex flex-column h-100">
+        <div class="card p-3 shadow flex-grow-1">
+            <h2>Hola: {{ nom }} {{ apeP }} {{ apeM }}</h2>
+            <h2>Tienes: {{ edad }} años</h2>
+            <h2>Signo del Zodiaco Chino: {{ signo_zodiaco }}</h2>
+            {% if ruta_imagen %}
+                <img src="{{ url_for('static', filename=ruta_imagen) }}" alt="{{ signo_zodiaco }}" class="img-fluid mt-3">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
