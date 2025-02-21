@@ -46,9 +46,19 @@
             </div>
         </div>
     </nav>
-
-    <div class="container mt-4">
-        {% block container %}{% endblock %}
+    
+    <div class="container">
+        {%with messages= get_flashed_messages() %}
+        {% if messages %}
+            {%for message in messages %}
+                <div class="alert alert-success">
+                    {{message}}
+                </div>
+            {%endfor%}
+        {%endif%}
+        {%endwith%}
+        {%block container%} 
+        {%endblock%}
     </div>
 
     <!-- Bootstrap 5 JS (opcional, solo si necesitas funcionalidades JS de Bootstrap) -->

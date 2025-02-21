@@ -2,8 +2,29 @@ from datetime import datetime
 import zodiacoForm
 import forms
 from flask import Flask, render_template, request, flash
+from flask_wtf.csrf import CSRFProtect
+from flask import g
+import forms 
 
 app = Flask(__name__)
+app.secret_key='es una clave secreta'
+csrf=CSRFProtect()
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.before_request
+def before_found():
+    g.nombre="Mario"
+    print("before 1")
+
+@app.after_request
+def after_found(response):
+    print("after 1")
+    return response
+
 
 
 def obtener_signo_zodiaco_chino(fechaN):
@@ -45,11 +66,10 @@ def datos():
             print(f"Hola: {nom} {apeP} {apeM} Tienes: {edad} años, Tu Sexo es: {sex} y tu signo del Zodiaco Chino es: {signo_zodiaco}")
     return render_template("zodiaco.html", form=zodiaco_clase, nom=nom, apeP=apeP, apeM=apeM, fechaN=fechaN, sex=sex, signo_zodiaco=signo_zodiaco, ruta_imagen=ruta_imagen, edad=edad)
 
-
-
 #Ruta ejemplo formulario
 @app.route("/alumnos", methods=["GET", "POST"])
 def alumnos():
+    print("Alumno{}".format(g.nombre))
     mat=''
     nom=''
     ape=''
@@ -61,7 +81,9 @@ def alumnos():
         nom=alumno_clase.nombre.data
         ape=alumno_clase.apellido.data
         email=alumno_clase.email.data
-        print('Nombre: {}'.format(nom))
+        mensaje='Bienvenido {}'.format(nom)
+        flash(mensaje)
+        #print('Nombre: {}'.format(nom))
     return render_template("alumnos.html", form=alumno_clase, mat=mat, nom=nom, ape=ape, email=email)
 
 @app.route("/")
@@ -170,4 +192,5 @@ def fun():
     return render_template("Cinepolis.html", procesar_compra=f"Total a pagar: ${precio:.2f}")
 
 if __name__ == "__main__":
+    csrf.init_app(app)
     app.run(debug=True, port=3000)

@@ -5,11 +5,12 @@
 
         <h1>Alumnos</h1>
         <form action="alumnos" method="post" novalidate>
+            {{form.csrf_token}}
+            <input type="hidden" name="csrf_token" value="{{csrf_token() }}"/>
             <div class="row control-group">
                 <div class="form-groupform-group col-xs-12 floating-label-form-grop controls">
                     {{macros.campoNuevo(form.matricula, class='form-control')}}
                 </div>
-
             </div>
             <div class="row control-group">
                 <div class="form-groupform-group col-xs-12 floating-label-form-grop controls">
